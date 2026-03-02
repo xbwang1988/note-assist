@@ -4,7 +4,7 @@ const { getAppIcon } = require('./app-icon');
 
 let stickyWindow = null;
 let stickyPinned = true;
-let stickyHiddenEdge = null;    // null | 'left' | 'right' | 'top'
+let stickyHiddenEdge = null;    // null | 'left' | 'right' | 'top' | 'bottom'
 let stickyRestoreRect = null;   // {x, y, width, height} 隐藏前的位置
 
 const EDGE_THRESHOLD = 40;   // 距边缘像素阈值
@@ -65,22 +65,32 @@ function createStickyWindow() {
   });
 }
 
+// 检测窗口是否触碰屏幕边缘（纯函数，方便测试）
+function detectEdge(bounds, workArea, threshold) {
+  if (bounds.x <= workArea.x + threshold) return 'left';
+  if (bounds.x + bounds.width >= workArea.x + workArea.width - threshold) return 'right';
+  if (bounds.y <= workArea.y + threshold) return 'top';
+  if (bounds.y + bounds.height >= workArea.y + workArea.height - threshold) return 'bottom';
+  return null;
+}
+
+// 计算隐藏到边缘后的窗口位置（纯函数，方便测试）
+function calcHiddenBounds(bounds, workArea, edge, peek) {
+  const target = { ...bounds };
+  if (edge === 'left') target.x = workArea.x - bounds.width + peek;
+  else if (edge === 'right') target.x = workArea.x + workArea.width - peek;
+  else if (edge === 'top') target.y = workArea.y - bounds.height + peek;
+  else if (edge === 'bottom') target.y = workArea.y + workArea.height - peek;
+  return target;
+}
+
 // 检测便签是否到达屏幕边缘，执行隐藏
 function checkEdgeHide() {
   if (!stickyWindow) return;
   const bounds = stickyWindow.getBounds();
   const workArea = screen.getPrimaryDisplay().workArea;
 
-  let edge = null;
-
-  if (bounds.x <= workArea.x + EDGE_THRESHOLD) {
-    edge = 'left';
-  } else if (bounds.x + bounds.width >= workArea.x + workArea.width - EDGE_THRESHOLD) {
-    edge = 'right';
-  } else if (bounds.y <= workArea.y + EDGE_THRESHOLD) {
-    edge = 'top';
-  }
-
+  const edge = detectEdge(bounds, workArea, EDGE_THRESHOLD);
   if (!edge) return;
 
   // 保存当前位置
@@ -88,15 +98,7 @@ function checkEdgeHide() {
   stickyHiddenEdge = edge;
 
   // 移动到边缘外，只露出一小条
-  const target = { ...bounds };
-  if (edge === 'left') {
-    target.x = workArea.x - bounds.width + EDGE_PEEK;
-  } else if (edge === 'right') {
-    target.x = workArea.x + workArea.width - EDGE_PEEK;
-  } else if (edge === 'top') {
-    target.y = workArea.y - bounds.height + EDGE_PEEK;
-  }
-
+  const target = calcHiddenBounds(bounds, workArea, edge, EDGE_PEEK);
   stickyWindow.setBounds(target);
   stickyWindow.webContents.send('edge-hidden', edge);
 }
@@ -126,5 +128,7 @@ module.exports = {
   createStickyWindow,
   getStickyWindow,
   restoreFromEdge,
-  toggleStickyPin
+  toggleStickyPin,
+  detectEdge,
+  calcHiddenBounds
 };

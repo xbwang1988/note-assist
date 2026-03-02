@@ -120,23 +120,61 @@ describe('getStickyWindow', () => {
   });
 });
 
-describe('边缘检测逻辑分析', () => {
-  test('checkEdgeHide 仅检测左/右/上，不检测底部（已知限制）', () => {
-    // 通过代码审查确认：checkEdgeHide 只检测 left/right/top
-    // 底部边缘不支持隐藏
-    // 这是一个已知的功能增强点
-    expect(true).toBe(true);
+// Issue #6 & #7: 纯函数 detectEdge / calcHiddenBounds 测试
+describe('detectEdge（纯函数）', () => {
+  const workArea = { x: 0, y: 0, width: 1920, height: 1040 };
+  const threshold = 40;
+
+  test('左边缘检测', () => {
+    expect(windowSticky.detectEdge({ x: 30, y: 300, width: 320, height: 460 }, workArea, threshold)).toBe('left');
   });
 
-  test('EDGE_THRESHOLD 阈值为 40px', () => {
-    // 从模块代码中验证常量值
-    const fs = require('fs');
-    const code = fs.readFileSync(
-      require.resolve('../../main/window-sticky.js'),
-      'utf-8'
-    );
-    expect(code).toContain('EDGE_THRESHOLD = 40');
-    expect(code).toContain('EDGE_PEEK = 6');
+  test('右边缘检测', () => {
+    expect(windowSticky.detectEdge({ x: 1570, y: 300, width: 320, height: 460 }, workArea, threshold)).toBe('right');
+  });
+
+  test('上边缘检测', () => {
+    expect(windowSticky.detectEdge({ x: 500, y: 20, width: 320, height: 460 }, workArea, threshold)).toBe('top');
+  });
+
+  test('底部边缘检测（Issue #6 修复）', () => {
+    expect(windowSticky.detectEdge({ x: 500, y: 550, width: 320, height: 460 }, workArea, threshold)).toBe('bottom');
+  });
+
+  test('不在边缘返回 null', () => {
+    expect(windowSticky.detectEdge({ x: 500, y: 300, width: 320, height: 460 }, workArea, threshold)).toBeNull();
+  });
+
+  test('恰好在阈值边界', () => {
+    // x = threshold (40) → 刚好在阈值内
+    expect(windowSticky.detectEdge({ x: 40, y: 300, width: 320, height: 460 }, workArea, threshold)).toBe('left');
+    // x = threshold + 1 (41) → 刚出阈值，不触发左边缘
+    expect(windowSticky.detectEdge({ x: 41, y: 300, width: 320, height: 460 }, workArea, threshold)).not.toBe('left');
+  });
+});
+
+describe('calcHiddenBounds（纯函数）', () => {
+  const workArea = { x: 0, y: 0, width: 1920, height: 1040 };
+  const peek = 6;
+
+  test('左隐藏', () => {
+    const result = windowSticky.calcHiddenBounds({ x: 30, y: 300, width: 320, height: 460 }, workArea, 'left', peek);
+    expect(result.x).toBe(0 - 320 + 6);
+  });
+
+  test('右隐藏', () => {
+    const result = windowSticky.calcHiddenBounds({ x: 1570, y: 300, width: 320, height: 460 }, workArea, 'right', peek);
+    expect(result.x).toBe(1920 - 6);
+  });
+
+  test('上隐藏', () => {
+    const result = windowSticky.calcHiddenBounds({ x: 500, y: 20, width: 320, height: 460 }, workArea, 'top', peek);
+    expect(result.y).toBe(0 - 460 + 6);
+  });
+
+  test('底部隐藏（Issue #6 修复）', () => {
+    const result = windowSticky.calcHiddenBounds({ x: 500, y: 550, width: 320, height: 460 }, workArea, 'bottom', peek);
+    expect(result.y).toBe(1040 - 6);
   });
 });
 

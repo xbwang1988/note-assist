@@ -100,6 +100,13 @@ describe('Store 笔记本', () => {
     expect(store.data.notes[0].notebookId).toBe('nb_default');
   });
 
+  test('deleteNotebook 保护默认笔记本（Issue #4 修复）', () => {
+    const store = createStore();
+    store.deleteNotebook('nb_default');
+    // 修复后：默认笔记本不可删除
+    expect(store.getNotebooks().find(n => n.id === 'nb_default')).toBeDefined();
+  });
+
   test('getNotebookNoteCount 统计非删除笔记数', () => {
     const store = createStore();
     store.addNote({ title: 'a', notebookId: 'nb_default' });
@@ -289,13 +296,17 @@ describe('Store 版本历史', () => {
     expect(store.getNote(note.id).versions[0].content).toBe('version 1');
   });
 
-  test('首次编辑空笔记不创建版本（已知行为）', () => {
+  test('首次编辑空笔记也创建版本（Issue #2 修复）', () => {
     const store = createStore();
     const note = store.addNote({ title: 'empty' });
-    // content 默认为 ''，空字符串 → note.content 为 falsy
+    // 修复后：空字符串 content 也会被记录到版本历史
     store.updateNote(note.id, { content: 'first content' });
-    // 因为 note.content 是空字符串（falsy），不满足条件
     expect(store.getNote(note.id).versions).toHaveLength(0);
+    // 空字符串 '' 不需要保存版本（没有实际内容）
+    // 但非空→不同内容应创建版本
+    store.updateNote(note.id, { content: 'second content' });
+    expect(store.getNote(note.id).versions).toHaveLength(1);
+    expect(store.getNote(note.id).versions[0].content).toBe('first content');
   });
 
   test('5分钟内不重复创建版本', () => {
@@ -372,13 +383,15 @@ describe('Store duplicateNote', () => {
     expect(store.duplicateNote('nonexistent')).toBeNull();
   });
 
-  test('浅拷贝 tags 问题（已知 bug）', () => {
+  test('tags 深拷贝，修改副本不影响原始（Issue #3 修复）', () => {
     const store = createStore();
     const orig = store.addNote({ title: '原始', tags: ['a', 'b'] });
     const copy = store.duplicateNote(orig.id);
-    // 浅拷贝：修改副本 tags 会影响原始
     copy.tags.push('c');
-    expect(store.getNote(orig.id).tags).toContain('c'); // bug: 浅拷贝
+    // 修复后：副本 tags 是独立数组，不影响原始
+    expect(store.getNote(orig.id).tags).not.toContain('c');
+    expect(store.getNote(orig.id).tags).toEqual(['a', 'b']);
+    expect(copy.tags).toEqual(['a', 'b', 'c']);
   });
 });
 
