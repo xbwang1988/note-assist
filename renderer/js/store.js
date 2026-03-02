@@ -71,6 +71,7 @@ class Store {
   }
 
   deleteNotebook(id) {
+    if (id === 'nb_default') return;
     this.data.notes.forEach(n => {
       if (n.notebookId === id) n.notebookId = 'nb_default';
     });
@@ -172,7 +173,7 @@ class Store {
     const note = this.data.notes.find(n => n.id === id);
     if (!note) return null;
 
-    if (updates.content !== undefined && note.content && updates.content !== note.content) {
+    if (updates.content !== undefined && note.content !== '' && updates.content !== note.content) {
       if (!note.versions) note.versions = [];
       const lastVersion = note.versions[note.versions.length - 1];
       if (!lastVersion || (Date.now() - lastVersion.timestamp > 5 * 60 * 1000)) {
@@ -237,6 +238,7 @@ class Store {
     copy.createdAt = Date.now();
     copy.updatedAt = Date.now();
     copy.versions = [];
+    copy.tags = [...(original.tags || [])];
     copy.pinned = false;
     this.data.notes.push(copy);
     this.save();

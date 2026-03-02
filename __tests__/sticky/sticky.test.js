@@ -101,13 +101,12 @@ describe('addTodo', () => {
     expect(ctx.todos[1].text).toBe('first');
   });
 
-  test('注释与代码矛盾：注释说 !高 !!中，代码实际 !!高 !中', () => {
-    // 文档bug: 注释第66行 "!高 !!中" 与代码逻辑相反
+  test('注释与代码一致：!!高 !中（Issue #1 修复）', () => {
     loadSticky();
     ctx.addTodo('!!test');
-    expect(ctx.todos[0].priority).toBe('high'); // 代码行为: !! = high
+    expect(ctx.todos[0].priority).toBe('high'); // !! = high
     ctx.addTodo('!test2');
-    expect(ctx.todos[0].priority).toBe('medium'); // 代码行为: ! = medium
+    expect(ctx.todos[0].priority).toBe('medium'); // ! = medium
   });
 });
 

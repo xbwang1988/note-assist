@@ -63,7 +63,7 @@ function addTodo(text) {
   text = text.trim();
   if (!text) return;
 
-  // 解析优先级前缀: !高 !!中 默认低
+  // 解析优先级前缀: !!高 !中 默认低
   let priority = 'low';
   if (text.startsWith('!!')) {
     priority = 'high';

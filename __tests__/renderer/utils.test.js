@@ -124,9 +124,13 @@ describe('Utils.countWords', () => {
     expect(Utils.countWords('hello你好world世界')).toBe(6);
   });
 
-  test('纯数字不计数', () => {
-    // 当前实现不计数字
-    expect(Utils.countWords('123 456')).toBe(0);
+  test('纯数字计数（Issue #5 修复）', () => {
+    expect(Utils.countWords('123 456')).toBe(2);
+  });
+
+  test('中英数混合', () => {
+    // 4中文字(第章世界) + 2词(1, hello) = 6
+    expect(Utils.countWords('第1章 hello 世界')).toBe(6);
   });
 });
 

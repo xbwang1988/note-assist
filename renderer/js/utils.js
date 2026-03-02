@@ -32,7 +32,7 @@ const Utils = {
   countWords(text) {
     if (!text) return 0;
     const chinese = (text.match(/[\u4e00-\u9fff]/g) || []).length;
-    const english = (text.match(/[a-zA-Z]+/g) || []).length;
+    const english = (text.match(/[a-zA-Z0-9]+/g) || []).length;
     return chinese + english;
   },
 
