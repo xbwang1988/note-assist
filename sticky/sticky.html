@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>桌面便签</title>
+  <link rel="stylesheet" href="css/sticky.css">
+</head>
+<body>
+  <div class="sticky" id="stickyApp">
+    <!-- 边缘隐藏时的提示层 -->
+    <div class="edge-hint" id="edgeHint">&#128204; 便签</div>
+    <!-- 标题栏（可拖动） -->
+    <div class="sticky-header" id="stickyHeader">
+      <span class="sticky-title">&#128204; 今日待办</span>
+      <div class="sticky-header-actions">
+        <button class="sticky-btn" id="btnClearDone" title="清除已完成">&#128465;</button>
+        <button class="sticky-btn" id="btnTheme" title="切换颜色">&#127912;</button>
+        <button class="sticky-btn" id="btnPin" title="置顶切换">&#128204;</button>
+        <button class="sticky-btn sticky-btn-min" id="btnMinimize" title="最小化">&minus;</button>
+        <button class="sticky-btn" id="btnClose" title="关闭便签">&times;</button>
+      </div>
+    </div>
+
+    <!-- 日期显示 -->
+    <div class="sticky-date" id="stickyDate"></div>
+
+    <!-- 快速输入 -->
+    <div class="sticky-input-area">
+      <input type="text" id="todoInput" placeholder="输入待办事项，回车添加..." autocomplete="off">
+      <button class="add-btn" id="btnAdd" title="添加">+</button>
+    </div>
+
+    <!-- 待办列表 -->
+    <div class="sticky-list" id="todoList"></div>
+
+    <!-- 底部统计 -->
+    <div class="sticky-footer">
+      <span id="todoStats">0 项待办</span>
+      <div class="footer-actions">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="active">未完成</button>
+        <button class="filter-btn" data-filter="done">已完成</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sticky.js"></script>
+</body>
+</html>

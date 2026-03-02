@@ -1,0 +1,8 @@
+/* ==================== Print Styles ==================== */
+@media print {
+  .sidebar, .note-list-panel, .editor-toolbar, .editor-header .editor-actions,
+  .editor-footer, .editor-meta { display: none !important; }
+
+  .editor-panel { position: static !important; width: 100% !important; }
+  .editor-content { padding: 0 !important; }
+}

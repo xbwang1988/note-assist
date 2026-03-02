@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云笔记 - 智能笔记助手</title>
+  <!-- CSS 模块 -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/notelist.css">
+  <link rel="stylesheet" href="css/calendar.css">
+  <link rel="stylesheet" href="css/template.css">
+  <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/context-menu.css">
+  <link rel="stylesheet" href="css/toast.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/print.css">
+  <!-- 第三方库样式 -->
+  <link rel="stylesheet" href="../vendor/github.min.css" id="hljs-light">
+  <link rel="stylesheet" href="../vendor/github-dark.min.css" id="hljs-dark" disabled>
+  <link rel="stylesheet" href="../vendor/katex.min.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- ========== 侧边栏 ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">&#128221;</span>
+          <span class="logo-text">云笔记</span>
+        </div>
+        <div class="sidebar-header-actions">
+          <button class="icon-btn" id="btnThemeToggle" title="切换主题">
+            <span class="icon-sun">&#9728;&#65039;</span>
+            <span class="icon-moon" style="display:none">&#127769;</span>
+          </button>
+          <button class="icon-btn" id="btnCollapseSidebar" title="收起侧边栏">&#9776;</button>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <div class="search-box">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="globalSearch" placeholder="搜索笔记、标签..." autocomplete="off">
+          <kbd class="search-shortcut">Ctrl+F</kbd>
+        </div>
+      </div>
+
+      <button class="btn-new-note-sidebar" id="btnNewNoteSidebar">
+        <span>+</span> 新建笔记
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-item active" data-view="all">
+            <span class="nav-icon">&#128196;</span>
+            <span class="nav-text">全部笔记</span>
+            <span class="nav-count" id="countAll">0</span>
+          </div>
+          <div class="nav-item" data-view="starred">
+            <span class="nav-icon">&#11088;</span>
+            <span class="nav-text">收藏夹</span>
+            <span class="nav-count" id="countStarred">0</span>
+          </div>
+          <div class="nav-item" data-view="recent">
+            <span class="nav-icon">&#128336;</span>
+            <span class="nav-text">最近编辑</span>
+          </div>
+          <div class="nav-item" data-view="todo">
+            <span class="nav-icon">&#9989;</span>
+            <span class="nav-text">待办事项</span>
+            <span class="nav-count" id="countTodo">0</span>
+          </div>
+          <div class="nav-item" data-view="calendar">
+            <span class="nav-icon">&#128197;</span>
+            <span class="nav-text">日历视图</span>
+          </div>
+          <div class="nav-item" data-view="templates">
+            <span class="nav-icon">&#128203;</span>
+            <span class="nav-text">模板库</span>
+          </div>
+          <div class="nav-item" id="btnStickyNote" data-view="sticky">
+            <span class="nav-icon">&#128204;</span>
+            <span class="nav-text">桌面便签</span>
+          </div>
+          <div class="nav-item" data-view="trash">
+            <span class="nav-icon">&#128465;&#65039;</span>
+            <span class="nav-text">回收站</span>
+            <span class="nav-count" id="countTrash">0</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="section-header">
+            <span class="section-title">&#128210; 笔记本</span>
+            <button class="btn-section-add" id="btnAddNotebook" title="新建笔记本">+</button>
+          </div>
+          <div class="notebook-tree" id="notebookTree"></div>
+        </div>
+
+        <div class="nav-section">
+          <div class="section-header">
+            <span class="section-title">&#127991;&#65039; 标签</span>
+          </div>
+          <div class="tag-cloud" id="tagCloud"></div>
+        </div>
+      </nav>
+    </aside>
+    <div class="sidebar-resizer" id="sidebarResizer"></div>
+
+    <!-- 侧边栏展开按钮（侧边栏收起后显示） -->
+    <button class="sidebar-expand-btn" id="btnExpandSidebar" title="展开侧边栏">&#9776;</button>
+
+    <!-- ========== 笔记列表面板 ========== -->
+    <section class="note-list-panel" id="noteListPanel">
+      <div class="note-list-header">
+        <h2 class="view-title" id="currentViewTitle">全部笔记</h2>
+        <div class="note-list-actions">
+          <select id="sortSelect" title="排序方式">
+            <option value="updatedAt-desc">最近修改</option>
+            <option value="createdAt-desc">最新创建</option>
+            <option value="createdAt-asc">最早创建</option>
+            <option value="title-asc">标题 A-Z</option>
+            <option value="title-desc">标题 Z-A</option>
+          </select>
+          <button class="icon-btn" id="btnListView" title="列表视图">&#9776;</button>
+          <button class="icon-btn" id="btnGridView" title="卡片视图">&#9638;</button>
+        </div>
+      </div>
+      <div class="note-list" id="noteList"></div>
+      <!-- 日历视图 -->
+      <div class="calendar-view" id="calendarView" style="display:none">
+        <div class="calendar-header">
+          <button class="icon-btn" id="btnPrevMonth">&lt;</button>
+          <span id="calendarTitle"></span>
+          <button class="icon-btn" id="btnNextMonth">&gt;</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-notes" id="calendarNotes"></div>
+      </div>
+      <!-- 模板库视图 -->
+      <div class="template-view" id="templateView" style="display:none">
+        <div class="template-grid" id="templateGrid"></div>
+      </div>
+    </section>
+    <div class="panel-resizer" id="notelistResizer"></div>
+
+    <!-- ========== 编辑器面板 ========== -->
+    <main class="editor-panel" id="editorPanel">
+      <div class="editor-empty" id="editorEmpty">
+        <div class="empty-illustration">&#128221;</div>
+        <h3>选择或创建一篇笔记</h3>
+        <p>在左侧选择笔记，或点击"新建笔记"开始写作</p>
+        <button class="btn-primary" id="btnNewNoteEmpty">+ 新建笔记</button>
+      </div>
+
+      <div class="editor-active" id="editorActive" style="display:none">
+        <div class="editor-header">
+          <input type="text" class="note-title-input" id="noteTitle" placeholder="无标题笔记" autocomplete="off">
+          <div class="editor-meta">
+            <span id="noteMeta"></span>
+            <span class="word-count" id="wordCount">0 字</span>
+          </div>
+          <div class="editor-actions">
+            <div class="editor-type-toggle">
+              <button class="type-btn active" data-type="richtext" title="富文本编辑">&#128221; 富文本</button>
+              <button class="type-btn" data-type="markdown" title="Markdown编辑">&#128187; Markdown</button>
+            </div>
+            <div class="editor-action-btns">
+              <button class="icon-btn" id="btnNotebook" title="移动到笔记本">&#128193;</button>
+              <button class="icon-btn" id="btnStar" title="收藏">&#9734;</button>
+              <button class="icon-btn" id="btnPin" title="置顶">&#128204;</button>
+              <button class="icon-btn" id="btnHistory" title="历史版本">&#128220;</button>
+              <button class="icon-btn" id="btnExport" title="导出">&#128228;</button>
+              <button class="icon-btn" id="btnDelete" title="删除">&#128465;&#65039;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 富文本工具栏 -->
+        <div class="editor-toolbar" id="richToolbar">
+          <div class="toolbar-group">
+            <select class="toolbar-select" id="headingSelect" title="标题层级">
+              <option value="">正文</option>
+              <option value="h1">标题 1</option>
+              <option value="h2">标题 2</option>
+              <option value="h3">标题 3</option>
+              <option value="h4">标题 4</option>
+              <option value="h5">标题 5</option>
+              <option value="h6">标题 6</option>
+            </select>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="bold" title="加粗 (Ctrl+B)"><b>B</b></button>
+            <button class="toolbar-btn" data-cmd="italic" title="斜体 (Ctrl+I)"><i>I</i></button>
+            <button class="toolbar-btn" data-cmd="underline" title="下划线 (Ctrl+U)"><u>U</u></button>
+            <button class="toolbar-btn" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+            <button class="toolbar-btn" data-cmd="highlight" title="高亮标记">
+              <span style="background:#fef08a;padding:0 3px;border-radius:2px">H</span>
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <input type="color" class="toolbar-color" id="fontColor" value="#000000" title="字体颜色">
+            <input type="color" class="toolbar-color" id="bgColor" value="#ffffff" title="背景颜色">
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="justifyLeft" title="左对齐">&#8676;</button>
+            <button class="toolbar-btn" data-cmd="justifyCenter" title="居中对齐">&#8596;</button>
+            <button class="toolbar-btn" data-cmd="justifyRight" title="右对齐">&#8677;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="insertUnorderedList" title="无序列表">&#8226; 列表</button>
+            <button class="toolbar-btn" data-cmd="insertOrderedList" title="有序列表">1. 列表</button>
+            <button class="toolbar-btn" data-cmd="todoList" title="待办列表">&#9744; 待办</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="blockquote" title="引用">&#10077;</button>
+            <button class="toolbar-btn" data-cmd="code" title="行内代码">&lt;/&gt;</button>
+            <button class="toolbar-btn" data-cmd="codeBlock" title="代码块">&#9114;</button>
+            <button class="toolbar-btn" data-cmd="insertHorizontalRule" title="分割线">&#8213;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="createLink" title="插入链接">&#128279;</button>
+            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片">&#128247;</button>
+            <button class="toolbar-btn" data-cmd="insertTable" title="插入表格">&#9638;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-cmd="undo" title="撤销 (Ctrl+Z)">&#8630;</button>
+            <button class="toolbar-btn" data-cmd="redo" title="重做 (Ctrl+Y)">&#8631;</button>
+          </div>
+        </div>
+
+        <!-- Markdown 工具栏 -->
+        <div class="editor-toolbar" id="mdToolbar" style="display:none">
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-md="heading" title="标题"># H</button>
+            <button class="toolbar-btn" data-md="bold" title="加粗">**B**</button>
+            <button class="toolbar-btn" data-md="italic" title="斜体">*I*</button>
+            <button class="toolbar-btn" data-md="strike" title="删除线">~~S~~</button>
+            <button class="toolbar-btn" data-md="code" title="行内代码">`C`</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-md="ul" title="无序列表">- 列表</button>
+            <button class="toolbar-btn" data-md="ol" title="有序列表">1. 列表</button>
+            <button class="toolbar-btn" data-md="todo" title="待办">[ ] 待办</button>
+            <button class="toolbar-btn" data-md="quote" title="引用">&gt; 引用</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" data-md="codeblock" title="代码块">```</button>
+            <button class="toolbar-btn" data-md="table" title="表格">&#9638; 表格</button>
+            <button class="toolbar-btn" data-md="link" title="链接">[链接]()</button>
+            <button class="toolbar-btn" data-md="image" title="图片">![图片]()</button>
+            <button class="toolbar-btn" data-md="hr" title="分割线">---</button>
+            <button class="toolbar-btn" data-md="math" title="公式">$$ 公式</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn md-preview-toggle active" data-md="preview" title="实时预览">&#128065; 预览</button>
+          </div>
+        </div>
+
+        <!-- 编辑区域 -->
+        <div class="editor-body">
+          <!-- 富文本编辑器 -->
+          <div class="richtext-editor" id="richtextEditor">
+            <div class="editor-content" id="editorContent" contenteditable="true" spellcheck="false" data-placeholder="开始书写..."></div>
+          </div>
+          <!-- Markdown 编辑器 -->
+          <div class="markdown-editor" id="markdownEditor" style="display:none">
+            <div class="md-split">
+              <div class="md-input-wrap">
+                <textarea class="md-input" id="mdInput" placeholder="使用 Markdown 语法书写..." spellcheck="false"></textarea>
+              </div>
+              <div class="md-preview-wrap">
+                <div class="md-preview" id="mdPreview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部标签区域 -->
+        <div class="editor-footer">
+          <div class="tag-area">
+            <span class="tag-label">&#127991;&#65039;</span>
+            <div class="tags-display" id="tagsDisplay"></div>
+            <input type="text" class="tag-input" id="tagInput" placeholder="添加标签 (回车确认)" autocomplete="off">
+          </div>
+          <div class="editor-status">
+            <span id="saveStatus">已保存</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ========== 模态框 ========== -->
+  <!-- 笔记本选择/新建 -->
+  <div class="modal-overlay" id="notebookModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="notebookModalTitle">新建笔记本</h3>
+        <button class="modal-close" data-close="notebookModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="modal-input" id="notebookNameInput" placeholder="笔记本名称" autocomplete="off">
+        <select class="modal-select" id="notebookParentSelect">
+          <option value="">无（顶级笔记本）</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="notebookModal">取消</button>
+        <button class="btn-primary" id="btnConfirmNotebook">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史版本 -->
+  <div class="modal-overlay" id="historyModal" style="display:none">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>历史版本</h3>
+        <button class="modal-close" data-close="historyModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-list" id="historyList"></div>
+        <div class="history-preview" id="historyPreview"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="historyModal">关闭</button>
+        <button class="btn-primary" id="btnRestoreVersion">恢复此版本</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导出 -->
+  <div class="modal-overlay" id="exportModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>导出笔记</h3>
+        <button class="modal-close" data-close="exportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-options">
+          <button class="export-option" data-format="pdf">
+            <span class="export-icon">&#128459;</span>
+            <span>PDF 文件</span>
+          </button>
+          <button class="export-option" data-format="html">
+            <span class="export-icon">&#127760;</span>
+            <span>HTML 文件</span>
+          </button>
+          <button class="export-option" data-format="markdown">
+            <span class="export-icon">&#128196;</span>
+            <span>Markdown 文件</span>
+          </button>
+          <button class="export-option" data-format="txt">
+            <span class="export-icon">&#128220;</span>
+            <span>纯文本文件</span>
+          </button>
+          <button class="export-option" data-format="json">
+            <span class="export-icon">&#128190;</span>
+            <span>JSON 备份</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 移动到笔记本 -->
+  <div class="modal-overlay" id="moveModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>移动到笔记本</h3>
+        <button class="modal-close" data-close="moveModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="move-notebook-list" id="moveNotebookList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 插入链接 -->
+  <div class="modal-overlay" id="linkModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>插入链接</h3>
+        <button class="modal-close" data-close="linkModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="modal-input" id="linkText" placeholder="链接文字" autocomplete="off">
+        <input type="url" class="modal-input" id="linkUrl" placeholder="https://..." autocomplete="off">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="linkModal">取消</button>
+        <button class="btn-primary" id="btnInsertLink">插入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 插入图片 -->
+  <div class="modal-overlay" id="imageModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>插入图片</h3>
+        <button class="modal-close" data-close="imageModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="url" class="modal-input" id="imageUrl" placeholder="图片URL https://..." autocomplete="off">
+        <div class="image-upload-area" id="imageUploadArea">
+          <p>或拖拽图片到此处 / 点击选择文件</p>
+          <input type="file" id="imageFileInput" accept="image/*" style="display:none">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="imageModal">取消</button>
+        <button class="btn-primary" id="btnInsertImage">插入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 插入表格 -->
+  <div class="modal-overlay" id="tableModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>插入表格</h3>
+        <button class="modal-close" data-close="tableModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-size-picker">
+          <label>行数: <input type="number" id="tableRows" value="3" min="1" max="20"></label>
+          <label>列数: <input type="number" id="tableCols" value="3" min="1" max="10"></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="tableModal">取消</button>
+        <button class="btn-primary" id="btnInsertTable">插入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右键菜单 -->
+  <div class="context-menu" id="contextMenu" style="display:none">
+    <div class="context-item" data-action="open">&#128196; 打开</div>
+    <div class="context-item" data-action="star">&#11088; 收藏/取消收藏</div>
+    <div class="context-item" data-action="pin">&#128204; 置顶/取消置顶</div>
+    <div class="context-divider"></div>
+    <div class="context-item" data-action="duplicate">&#128203; 复制笔记</div>
+    <div class="context-item" data-action="move">&#128193; 移动到...</div>
+    <div class="context-divider"></div>
+    <div class="context-item context-danger" data-action="delete">&#128465;&#65039; 删除</div>
+  </div>
+
+  <!-- Toast 通知 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 第三方库（本地加载） -->
+  <script src="../vendor/marked.min.js"></script>
+  <script src="../vendor/highlight.min.js"></script>
+  <script src="../vendor/katex.min.js"></script>
+
+  <!-- 基础层 -->
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/templates.js"></script>
+
+  <!-- App 类核心 -->
+  <script src="js/app.js"></script>
+
+  <!-- Mixin 扩展 -->
+  <script src="js/app-theme.js"></script>
+  <script src="js/app-toast.js"></script>
+  <script src="js/app-sidebar.js"></script>
+  <script src="js/app-notelist.js"></script>
+  <script src="js/app-editor.js"></script>
+  <script src="js/app-toolbar.js"></script>
+  <script src="js/app-note-ops.js"></script>
+  <script src="js/app-notebook.js"></script>
+  <script src="js/app-history.js"></script>
+  <script src="js/app-export.js"></script>
+  <script src="js/app-calendar.js"></script>
+  <script src="js/app-templates.js"></script>
+  <script src="js/app-events.js"></script>
+
+  <!-- 初始化（必须最后） -->
+  <script src="js/app-init.js"></script>
+</body>
+</html>

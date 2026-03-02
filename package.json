@@ -1,0 +1,55 @@
+{
+  "name": "cloud-notes",
+  "version": "1.0.0",
+  "description": "云笔记 - 智能笔记助手",
+  "main": "main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable"
+  },
+  "author": "CloudNotes",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.cloudnotes.app",
+    "productName": "云笔记",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main/**/*",
+      "preload/**/*",
+      "renderer/**/*",
+      "sticky/**/*",
+      "vendor/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.svg"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "云笔记",
+      "installerLanguages": [
+        "zh_CN"
+      ],
+      "language": "2052"
+    }
+  }
+}

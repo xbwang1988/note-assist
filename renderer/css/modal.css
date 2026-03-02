@@ -1,0 +1,246 @@
+/* ==================== Modals ==================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal {
+  background: var(--bg-modal);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 460px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.2s ease;
+}
+
+.modal-lg {
+  max-width: 700px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  color: var(--text-tertiary);
+  padding: 4px;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+}
+
+.modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--bg-input);
+  margin-bottom: 10px;
+  transition: border-color var(--transition);
+}
+
+.modal-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.modal-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Export Options */
+.export-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.export-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.export-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.export-icon {
+  font-size: 28px;
+}
+
+.export-option span:last-child {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* History */
+.history-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.history-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-item:hover {
+  background: var(--bg-hover);
+}
+
+.history-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.history-item-time {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.history-item-size {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.history-preview {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Move modal */
+.move-notebook-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.move-nb-item {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.move-nb-item:hover {
+  background: var(--bg-hover);
+}
+
+.move-nb-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+/* Table size picker */
+.table-size-picker {
+  display: flex;
+  gap: 16px;
+}
+
+.table-size-picker label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.table-size-picker input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  outline: none;
+  text-align: center;
+}
+
+/* Image upload */
+.image-upload-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.image-upload-area:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}

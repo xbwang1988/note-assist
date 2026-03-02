@@ -1,0 +1,127 @@
+/* ==================== Reset & Base ==================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+/* ==================== Layout ==================== */
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Common Buttons */
+.btn-primary {
+  padding: 8px 20px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background var(--transition);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  padding: 8px 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-hover);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* 面板拖拽缩放手柄（通用） */
+.sidebar-resizer,
+.panel-resizer {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 11;
+  margin-left: -2px;
+  margin-right: -2px;
+  transition: background 0.15s;
+}
+.sidebar-resizer:hover,
+.sidebar-resizer.active,
+.panel-resizer:hover,
+.panel-resizer.active {
+  background: var(--primary-color);
+}
+.sidebar.collapsed ~ .sidebar-resizer {
+  display: none;
+}

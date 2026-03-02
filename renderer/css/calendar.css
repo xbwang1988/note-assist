@@ -1,0 +1,84 @@
+/* ==================== Calendar View ==================== */
+.calendar-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.calendar-cell.header {
+  font-weight: 600;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  cursor: default;
+}
+
+.calendar-cell:not(.header):hover {
+  background: var(--bg-hover);
+}
+
+.calendar-cell.today {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.calendar-cell.selected {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.calendar-cell.has-notes::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  position: absolute;
+  bottom: 4px;
+}
+
+.calendar-cell.other-month {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+.calendar-notes {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+.calendar-notes h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
