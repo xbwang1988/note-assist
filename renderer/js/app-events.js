@@ -170,6 +170,123 @@ App.prototype.bindEvents = function() {
   const editorContent = document.getElementById('editorContent');
   editorContent.addEventListener('input', Utils.debounce(() => self.onContentChange(), 500));
 
+  // 光标位置变化时更新工具栏标题层级显示
+  document.addEventListener('selectionchange', () => {
+    self.updateHeadingSelect();
+  });
+
+  // Rich text keyboard shortcuts
+  editorContent.addEventListener('keydown', (e) => {
+    const ctrl = e.ctrlKey || e.metaKey;
+
+    // Tab 缩进 / Shift+Tab 反缩进
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        document.execCommand('outdent', false, null);
+      } else {
+        document.execCommand('indent', false, null);
+      }
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+S — 删除线
+    if (ctrl && e.shiftKey && e.key === 'S') {
+      e.preventDefault();
+      document.execCommand('strikeThrough', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+X — 删除线（备用）
+    if (ctrl && e.shiftKey && e.key === 'X') {
+      e.preventDefault();
+      document.execCommand('strikeThrough', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+H — 高亮
+    if (ctrl && e.shiftKey && e.key === 'H') {
+      e.preventDefault();
+      document.execCommand('hiliteColor', false, '#fef08a');
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+7 — 有序列表
+    if (ctrl && e.shiftKey && e.key === '7') {
+      e.preventDefault();
+      document.execCommand('insertOrderedList', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+8 — 无序列表
+    if (ctrl && e.shiftKey && e.key === '8') {
+      e.preventDefault();
+      document.execCommand('insertUnorderedList', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+Shift+9 — 引用块
+    if (ctrl && e.shiftKey && e.key === '9') {
+      e.preventDefault();
+      document.execCommand('formatBlock', false, 'blockquote');
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+E — 居中对齐
+    if (ctrl && e.key === 'e') {
+      e.preventDefault();
+      document.execCommand('justifyCenter', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+L — 左对齐
+    if (ctrl && e.key === 'l') {
+      e.preventDefault();
+      document.execCommand('justifyLeft', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+R — 右对齐
+    if (ctrl && e.key === 'r') {
+      e.preventDefault();
+      document.execCommand('justifyRight', false, null);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+1~6 — 标题层级
+    if (ctrl && e.key >= '1' && e.key <= '6') {
+      e.preventDefault();
+      document.execCommand('formatBlock', false, 'h' + e.key);
+      self.onContentChange();
+      return;
+    }
+
+    // Ctrl+0 — 恢复正文
+    if (ctrl && e.key === '0') {
+      e.preventDefault();
+      document.execCommand('formatBlock', false, 'p');
+      self.onContentChange();
+      return;
+    }
+
+    // Escape — 取消焦点
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      editorContent.blur();
+      return;
+    }
+  });
+
   // Handle todo checkbox clicks
   editorContent.addEventListener('click', (e) => {
     if (e.target.type === 'checkbox') {
@@ -187,26 +304,123 @@ App.prototype.bindEvents = function() {
     self.onContentChange();
   }, 300));
 
-  // Markdown tab support
-  document.getElementById('mdInput').addEventListener('keydown', (e) => {
+  // Markdown keyboard shortcuts
+  const mdInput = document.getElementById('mdInput');
+  mdInput.addEventListener('keydown', (e) => {
+    const textarea = e.target;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const ctrl = e.ctrlKey || e.metaKey;
+    const selected = textarea.value.substring(start, end);
+
+    // Tab 缩进 / Shift+Tab 反缩进
     if (e.key === 'Tab') {
       e.preventDefault();
-      const textarea = e.target;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
-      textarea.selectionStart = textarea.selectionEnd = start + 2;
+      if (e.shiftKey) {
+        const before = textarea.value.substring(0, start);
+        const lineStart = before.lastIndexOf('\n') + 1;
+        const line = textarea.value.substring(lineStart);
+        if (line.startsWith('  ')) {
+          textarea.value = textarea.value.substring(0, lineStart) + line.substring(2);
+          textarea.selectionStart = textarea.selectionEnd = Math.max(lineStart, start - 2);
+        }
+      } else {
+        textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + 2;
+      }
       textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Ctrl+B — 加粗
+    if (ctrl && e.key === 'b') {
+      e.preventDefault();
+      const wrap = `**${selected || '粗体'}**`;
+      textarea.value = textarea.value.substring(0, start) + wrap + textarea.value.substring(end);
+      textarea.selectionStart = start + 2;
+      textarea.selectionEnd = start + wrap.length - 2;
+      textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Ctrl+I — 斜体
+    if (ctrl && e.key === 'i') {
+      e.preventDefault();
+      const wrap = `*${selected || '斜体'}*`;
+      textarea.value = textarea.value.substring(0, start) + wrap + textarea.value.substring(end);
+      textarea.selectionStart = start + 1;
+      textarea.selectionEnd = start + wrap.length - 1;
+      textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Ctrl+Shift+S — 删除线
+    if (ctrl && e.shiftKey && e.key === 'S') {
+      e.preventDefault();
+      const wrap = `~~${selected || '删除线'}~~`;
+      textarea.value = textarea.value.substring(0, start) + wrap + textarea.value.substring(end);
+      textarea.selectionStart = start + 2;
+      textarea.selectionEnd = start + wrap.length - 2;
+      textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Ctrl+` — 行内代码
+    if (ctrl && e.key === '`') {
+      e.preventDefault();
+      const wrap = '`' + (selected || '代码') + '`';
+      textarea.value = textarea.value.substring(0, start) + wrap + textarea.value.substring(end);
+      textarea.selectionStart = start + 1;
+      textarea.selectionEnd = start + wrap.length - 1;
+      textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Ctrl+K — 插入链接
+    if (ctrl && e.key === 'k') {
+      e.preventDefault();
+      const wrap = `[${selected || '链接文字'}](url)`;
+      textarea.value = textarea.value.substring(0, start) + wrap + textarea.value.substring(end);
+      textarea.selectionStart = start;
+      textarea.selectionEnd = start + wrap.length;
+      textarea.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    // Escape — 取消焦点
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      textarea.blur();
+      return;
     }
   });
 
   // Title change
-  document.getElementById('noteTitle').addEventListener('input', Utils.debounce(() => {
+  const noteTitleInput = document.getElementById('noteTitle');
+  noteTitleInput.addEventListener('input', Utils.debounce(() => {
     if (!self.currentNoteId) return;
-    const title = document.getElementById('noteTitle').value;
+    const title = noteTitleInput.value;
     self.store.updateNote(self.currentNoteId, { title });
     self.renderNoteList();
   }, 500));
+
+  // Title keyboard shortcuts
+  noteTitleInput.addEventListener('keydown', (e) => {
+    // Enter — 跳转到正文编辑区
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (self.currentEditorType === 'markdown') {
+        document.getElementById('mdInput').focus();
+      } else {
+        editorContent.focus();
+      }
+    }
+    // Escape — 取消标题焦点
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      noteTitleInput.blur();
+    }
+  });
 
   // Tag input
   const tagInput = document.getElementById('tagInput');

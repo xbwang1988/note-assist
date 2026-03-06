@@ -117,6 +117,37 @@ App.prototype.updateWordCount = function() {
   document.getElementById('wordCount').textContent = `${count} 字`;
 };
 
+// 检测光标所在位置的标题层级，更新工具栏下拉框
+App.prototype.updateHeadingSelect = function() {
+  if (this.currentEditorType !== 'richtext') return;
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+
+  let node = sel.anchorNode;
+  if (!node) return;
+
+  // 向上查找最近的块级元素
+  if (node.nodeType === 3) node = node.parentElement;
+  const editorEl = document.getElementById('editorContent');
+  let blockTag = '';
+  while (node && node !== editorEl) {
+    const tag = node.tagName;
+    if (tag && /^H[1-6]$/.test(tag)) {
+      blockTag = tag.toLowerCase();
+      break;
+    }
+    if (tag && /^(P|DIV|BLOCKQUOTE|PRE|LI)$/.test(tag)) {
+      break;
+    }
+    node = node.parentElement;
+  }
+
+  const headingSelect = document.getElementById('headingSelect');
+  if (headingSelect) {
+    headingSelect.value = blockTag;
+  }
+};
+
 App.prototype.switchEditorType = function(type) {
   if (type === this.currentEditorType) return;
   if (!this.currentNoteId) return;
