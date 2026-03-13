@@ -87,3 +87,143 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
   --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
 }
+
+/* ==================== Ocean Blue ==================== */
+[data-theme="ocean"] {
+  --bg-primary: #f0f7ff;
+  --bg-secondary: #e1effe;
+  --bg-tertiary: #d0e4fd;
+  --bg-hover: #bdd7fb;
+  --bg-active: #a8c8f7;
+  --bg-sidebar: #dceafa;
+  --bg-editor: #f5f9ff;
+  --bg-card: #f0f7ff;
+  --bg-modal: #f5f9ff;
+  --bg-input: #ffffff;
+  --bg-toolbar: #e8f1fd;
+  --bg-code: #e1effe;
+  --bg-highlight: #fef9c3;
+  --bg-toast: #1e40af;
+
+  --text-primary: #1e3a5f;
+  --text-secondary: #4a6d8c;
+  --text-tertiary: #7a9ab8;
+  --text-link: #2563eb;
+
+  --border-color: #b8d4f0;
+  --border-light: #d0e4fd;
+
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: #dbeafe;
+  --accent-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(30,64,175,0.08);
+  --shadow-md: 0 4px 12px rgba(30,64,175,0.12);
+  --shadow-lg: 0 8px 30px rgba(30,64,175,0.16);
+}
+
+/* ==================== Forest Green ==================== */
+[data-theme="forest"] {
+  --bg-primary: #f0faf0;
+  --bg-secondary: #dcf2dc;
+  --bg-tertiary: #c8e8c8;
+  --bg-hover: #b4deb4;
+  --bg-active: #9cd49c;
+  --bg-sidebar: #d4ecd4;
+  --bg-editor: #f5fbf5;
+  --bg-card: #f0faf0;
+  --bg-modal: #f5fbf5;
+  --bg-input: #ffffff;
+  --bg-toolbar: #e4f4e4;
+  --bg-code: #dcf2dc;
+  --bg-highlight: #fef9c3;
+  --bg-toast: #166534;
+
+  --text-primary: #1a3c2a;
+  --text-secondary: #3d6b50;
+  --text-tertiary: #6d9a80;
+  --text-link: #16a34a;
+
+  --border-color: #a8d8b8;
+  --border-light: #c8e8d0;
+
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --accent-light: #dcfce7;
+  --accent-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(22,101,52,0.08);
+  --shadow-md: 0 4px 12px rgba(22,101,52,0.12);
+  --shadow-lg: 0 8px 30px rgba(22,101,52,0.16);
+}
+
+/* ==================== Starry Purple ==================== */
+[data-theme="purple"] {
+  --bg-primary: #1e1b2e;
+  --bg-secondary: #272440;
+  --bg-tertiary: #302d4a;
+  --bg-hover: #3d3960;
+  --bg-active: #4a4570;
+  --bg-sidebar: #231f38;
+  --bg-editor: #272440;
+  --bg-card: #2c2845;
+  --bg-modal: #302d4a;
+  --bg-input: #302d4a;
+  --bg-toolbar: #2c2845;
+  --bg-code: #302d4a;
+  --bg-highlight: #7c3aed20;
+  --bg-toast: #5b21b6;
+
+  --text-primary: #e8e4f0;
+  --text-secondary: #b0a8c8;
+  --text-tertiary: #7a7094;
+  --text-link: #a78bfa;
+
+  --border-color: #403c60;
+  --border-light: #342f50;
+
+  --accent: #8b5cf6;
+  --accent-hover: #a78bfa;
+  --accent-light: #8b5cf620;
+  --accent-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.45);
+}
+
+/* ==================== Sunset Orange ==================== */
+[data-theme="sunset"] {
+  --bg-primary: #fff8f0;
+  --bg-secondary: #fef0e0;
+  --bg-tertiary: #fde6d0;
+  --bg-hover: #fcd9bc;
+  --bg-active: #facca8;
+  --bg-sidebar: #fceadb;
+  --bg-editor: #fffaf5;
+  --bg-card: #fff8f0;
+  --bg-modal: #fffaf5;
+  --bg-input: #ffffff;
+  --bg-toolbar: #fef2e6;
+  --bg-code: #fef0e0;
+  --bg-highlight: #fef9c3;
+  --bg-toast: #9a3412;
+
+  --text-primary: #431407;
+  --text-secondary: #78350f;
+  --text-tertiary: #a16207;
+  --text-link: #ea580c;
+
+  --border-color: #f5d0b0;
+  --border-light: #fde6d0;
+
+  --accent: #ea580c;
+  --accent-hover: #dc2626;
+  --accent-light: #fff7ed;
+  --accent-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(154,52,18,0.08);
+  --shadow-md: 0 4px 12px rgba(154,52,18,0.12);
+  --shadow-lg: 0 8px 30px rgba(154,52,18,0.16);
+}

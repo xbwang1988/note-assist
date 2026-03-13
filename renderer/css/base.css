@@ -103,6 +103,11 @@ a:hover { text-decoration: underline; }
   color: var(--text-primary);
 }
 
+.theme-label {
+  font-size: 12px;
+  vertical-align: middle;
+}
+
 /* 面板拖拽缩放手柄（通用） */
 .sidebar-resizer,
 .panel-resizer {
