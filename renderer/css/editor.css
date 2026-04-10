@@ -262,6 +262,73 @@
   max-width: 100%;
   border-radius: var(--radius-md);
   margin: 8px 0;
+  cursor: pointer;
+}
+
+/* 图片缩放容器 */
+.img-resize-wrapper {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.img-resize-wrapper img {
+  display: block;
+  margin: 0;
+}
+
+.img-resize-wrapper.active {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.img-resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: none;
+  z-index: 10;
+}
+
+.img-resize-wrapper.active .img-resize-handle {
+  display: block;
+}
+
+.img-resize-handle-se {
+  right: -6px;
+  bottom: -6px;
+  cursor: nwse-resize;
+}
+
+.img-resize-handle-sw {
+  left: -6px;
+  bottom: -6px;
+  cursor: nesw-resize;
+}
+
+.img-resize-size-label {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  display: none;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.img-resize-wrapper.resizing .img-resize-size-label {
+  display: block;
 }
 
 .editor-content table {

@@ -19,6 +19,7 @@ class App {
     this.applyTheme(this.store.getSetting('theme'));
     this.setupMarked();
     this.bindEvents();
+    this.initImageResize();
     this.renderSidebar();
     this.renderNoteList();
     this.updateStats();
